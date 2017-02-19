@@ -6,7 +6,7 @@ ASCII (American Standard Code for Information Interchange，美国信息交换�
     97～122 26个小写英文字母
 
 
-dec	oct hex	ch
+dec oct hex ch
 0	0	00	NUL (null)
 1	1	01	SOH (start of header)
 2	2	02	STX (start of text)
