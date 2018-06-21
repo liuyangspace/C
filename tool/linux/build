@@ -1,0 +1,37 @@
+三：构建过程中各种文件
+6）程序开发者需要写以下几个脚本
+1、configure.in
+这是配置脚本，包含autoconf的可执行宏。当然它也可以包含shell命令。这个脚本包含为可移植服务的特性检测，文件的最后AC_OUTPUT宏列举了当用户运行configure脚本需要创建的文件，一般是Makefile。
+2、Makefile.am
+这是automake的输入文件。它描述了代码是如何构建的。它由automake的变量组成，当然它也可能包含Makefile的目标。这个文件仅是automake需要，新一点的工具可以允许开发者直接写Makefile.in文件。
+3、acconfig.h
+当configure脚本用AM_CONFIG_HEADER或者AC_CONFIG_HEADER产生了带可移植特性的头文件时，这个文件用来描述那些autoheader命令识别不了宏。通常在configure.in任何一个AC_DEFINE宏都会在这个文件有一行。
+4、acinclude.m4
+这个文件不是必须的。它定义了本地autoconf宏，这些宏可能用在configure.in里面。如果你不需要任何本地的autoconf宏，你就不需要这个文件，因为你可以把这些需要直接放在configure.in文件里。新一点的工具可能会忽略这个文件，取代的是m4的文件夹，然后在Makefile.am用ACLOCAL_AMFLAGS=-I m4使得aclocal检查里面是否有宏定义。
+
+7）开发文件
+1、configure
+这是稍后用来构建package的配置脚本。它是autoconf从configure.in 和aclocal.m4产生的，同时它也是一个shell脚本
+2、Makefile.in
+这是configure脚本生成Makefile的高一级文件，它是由automake从Makefile.am文件产生的。如果你没有用到automake，那你就必须自己来写这个文件。
+3、aclocal.m4
+它由aclocal程序产生，基于configure.in和acinclude.m4的内容。它包含了autoconf定义的宏，用来产生configure。这些autoconf的宏可能定义在acinclude.m4文件里面，也可能定义在automake或者libtool或者gettext里面。
+4、configin
+这个文件基于acconfig.h和configure.in，有autoheade产生。在构建时，configure脚本会在它里面定义一些宏来创建config.h，config.h是用来包含进你的应用程序的。它允许你的程序使用预处理条件以便改变你的程序动作适应当前的系统。这个文件也可能名为config.h.in
+5、stamp.h-in
+automake产生的，它总是包含timestamp字串，它用来标识文件的时间戳以指明config.in是否是最新的。
+
+8）构建文件
+1、config.status
+安装一个软件第一步骤运行configure脚本，然后它会产生config.status，这也是一个shell脚本。当automake使用Makefile.in产生Makefile时会包含自动运行config.status的规则。
+2、Makefile
+make会读入然后产生program，config.status运行时候会将Makefile.in翻译成Makefile
+3、config.h
+这个文件定义了c预处理宏，以便适应不同的移植要求，config.status也会把configin翻译成config.h
+4、config.cache
+configure脚本运行时缓存，可以加速构建过程。
+5、stamp.h
+跟stamp-h.in类似。
+
+9）支持文件
+1、ABOUT－NLS；2、ansi2knr.c;3、ansi2knr.1;4、config.guess;5、config.sub;6

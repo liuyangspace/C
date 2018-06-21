@@ -19,6 +19,14 @@
         函数：
             getchar()
             putchar()
+        预定义常量：
+            EOF (end of file)
 
     字符串：[有双引号引起来的一个字符序列]
+
+        函数：
+            scanf()
+            printf()
 */
+
+
