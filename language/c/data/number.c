@@ -9,9 +9,13 @@
             float           // 单精度
             double          // 双精度
             long double     // 高精度，l 或 L 结尾表示
-
+e.g:
+    int number1 = 1234567890;
+    int number2 = 01234567;
+    int number3 = 0x1abcdef;
+参考:
+    <limits.h>
+    <float.h>
 */
 
-int number1 = 1234567890;
-int number2 = 01234567;
-int number3 = 0x1abcdef;
+

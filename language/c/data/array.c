@@ -6,9 +6,11 @@ Array
     type name[size1][size2][size3]...
 初始化:
     var = { var1,var2... };
+    var = { {var1,var2...},... };
 操作:
     array[index] = var;
     var = array[index];
+    type *p = array;
 
 指针数组: char *name[]
 

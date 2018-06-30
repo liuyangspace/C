@@ -18,7 +18,7 @@ pointer
     int *p=a;   // 指向int数组的指针
 函数指针:
     int add(int a, int b);
-    int (*p)(int a, int b); // 声明
+    int (*p)(int , int ); // 声明
     p=add; // 初始化，函数指针, 指向函数 add()
     p(1,2); // 使用
     (*p)(1,2); // 使用
