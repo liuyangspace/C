@@ -24,7 +24,7 @@ info:
     行连接符: \
     分割符: 换行符
     分类:
-        宏定义:
+        宏定义(替换):
             #define 标识符(标识符表opt) 记号序列
                 宏定义(替换)，定义符号常量,宏,结尾无分号, e.g:
                 #define markName replaceValue
@@ -32,6 +32,8 @@ info:
                 #define  max(A, B)  ((A) > (B) ? (A) : (B))
                 #define  dprint(expr)   printf(#expr " = %g\n", expr)   // 参数名以#为前缀，实参将被加双引号
                 #define  paste(front, back)  front ## back              // ##参数链接，实参转为 frontback
+                #defind  do{}while(0)                                   // do{}while(0) 常用于代码段替换，（{}替换可能编译失败）
+                // 定义宏替换时，建议 所有参数用小括号“()”标明边界符，替换内容使用大括号“{}”或“do{}while(0)”标明边界符
             #undef 标识符
                 取消名字的宏定义，e.g:
                 #undef getchar
