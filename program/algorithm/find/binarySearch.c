@@ -22,7 +22,6 @@ int find(int target,int list[],int left,int right){
     }
     //
     int middle = (left+right)/2;
-    //printf("%d,%d\t%d,%d\t%d,%d\n",middle,list[middle],left,list[left],right,list[right]);
     switch (compare(target,list[middle])){
         case -1:
             right=middle-1;

@@ -1,51 +1,151 @@
+#include <stdlib.h>
+#include <stdio.h>
 
-图:
-    图G由两个集合V、E构成，V是节点的有限非空集合，E是节点的二元组集合，节点二元组称为边。
+#define GRAPH_MAX_SIZE 100
+/*
+ * Graph 图
+ *
+ * ADT:
+ *  数据:
+ *      节点的非空集合，节点二元组构成的边集。
+ *  操作:
+ *      new
+ *      insert
+ *      delete
+ *      empty
+ *
+ * */
+// 邻接表
+// 边
+typedef struct Edge {
+    int key;
+    struct Edge *next;
+} Edge;
+// 图，节点(顺序存储)
+typedef struct Graph {
+    int size;
+    struct Edge *edge[GRAPH_MAX_SIZE];
+} Graph;
 
-概念:
-    点集,边集: V(G)和E(G)分别称为图G的节点集及边集。图也可表示为G=(V,E)。
-    无向图: 无向图的边是无序二元组，即(u,v)和(v,u)表示同一条边。
-    完全图: n个节点的无向图最大边数为 n(n-1)/2 ,则称之为完全图。
-    有向图: 有向图的边是有序二元组，用<u,v>表示，u是边尾，v是边头。 n个节点的无向图最大边数为 n(n-1)。
-    相邻,邻接节点: 对于边集E(G)的一条边(u,v),称u、v相邻，成边((u,v))的邻接节点为u，v。
-    指向,发自: 对于有向图的边<u,v>，称u指向v,v发自u，<u,v>与u、v邻接。
-    子图: 若图有图G,G',且V(G')⊆V(G),E(G')⊆E(G),则称G'为G的子图。
-    带环边图: 由节点u到u的边称为环边，存在环边的图为带环边图。
-    重复边图: 允许重复边出现的图，为重复边图。
-    路径: 图G中的节点序列u、i1、i2、...、ik、v称为从u到v的路径，该路径有E(G)中的边(u,i1)、...、(ik,v)组成。
-    有向路径: 有向图中的路径。
-    路径长度: 路径中的边数。
-    简单路径: 路径中除了起点和终点，其他节点都不相同。
-    简单有向路径: 有向图中的简单路径。
-    环路: 起点和终点相同的简单路径。
-    简单有向环路: 有向图中的环路。
-    节点连通: 无向图G中称两点u、v连通，当且仅当存在由u到v的路径。
-    图连通: 无向图G连通，当且仅当G中不同节点两两连通。
-    分量,连通分量: 无向图的最大连通子图。
-    树: 树是连通的无环图。
-    强连通: 有向图G称为强连通，当且仅当V(G)中所有不同的两点 u、v,都同时存在 由u到v的有向路径 和 由v到u的有向路径。
-    强连通分量: 有向图的最大强连通子图。
-    度: 节点的度，是该节点邻接的边数。
-    入度: 有向图G中指向某节点的边数。
-    出度: 有向图G由某节点发出的边数。
-    加权边: 有权值标识的边。
-    网络,加权图: 边为加权边的图。
+Edge *newNode(int key){
+    Edge *edge = (Edge *)malloc(sizeof(Edge));
+    if(edge==NULL){
+        fprintf(stderr,"No more Memory!");
+        exit(-1);
+    }
+    edge->key=key;
+    edge->next=NULL;
+    return edge;
+}
 
-性质:
-    1) 最大边数: n个节点的无向图最大边数为 n(n-1)。n个节点的无向图最大边数为 n(n-1)/2。
-    2) 边数: 图G的边数为V(G)中所有节点度数和的1/2。
+void printNode(Edge *edge){
+    while (edge!=NULL){
+        printf("\t%d =>",edge->key);
+        edge = edge->next;
+    }
+}
 
-存储:
-    邻接矩阵:
-        令图G=(V,E),有n>=1个节点，G的邻接矩阵是n*n的二维数组a。
-        每个数组元素a[i][j]=1,当且仅当边(i,j) (有向图为<i,j>)在E(G)中。
-        每个数组元素a[i][j]=0,当且仅当边(i,j) (有向图为<i,j>)不在E(G)中。
-        无向图的邻接矩阵是对称矩阵。
-    邻接表:
-        邻接表存储是用n条单链表替代邻接矩阵的n行。第i条链表的每个节点都对应与i相邻的节点。
-    邻接多重表:
-        邻接表中第i条链表的每个节点记录与从i到该节点j,(i,j)边的相邻的两个节点标识i、j和与之对应的指向i、j的其他链表节点的指针。
-    十字邻接表:
+Graph *newGraph(int size){
+    Graph *graph = (Graph *)malloc(sizeof(Graph));
+    if(graph==NULL || size>GRAPH_MAX_SIZE){
+        fprintf(stderr,"No more Memory!");
+        exit(-1);
+    }
+    graph->size=size;
+    int i;
+    for (i = 0; i< GRAPH_MAX_SIZE ; i++) {
+        graph->edge[i]=NULL;
+    }
+    return graph;
+}
+void addEdge(Graph *graph,int key1,int key2){
+    if(key1>graph->size || key2>graph->size)
+        return;
+    //
+    Edge *tmp = graph->edge[key1];
+    int hasKey = 0;
+    while (tmp){
+        if(tmp->key==key2){
+            hasKey=1;
+        }
+        tmp=tmp->next;
+    }
+    if (hasKey==0){
+        Edge *key1Edge = newNode(key2);
+        key1Edge->next = graph->edge[key1];
+        graph->edge[key1] = key1Edge;
+    }
+    //
+    tmp = graph->edge[key2];
+    hasKey = 0;
+    while (tmp){
+        if(tmp->key==key1){
+            hasKey=1;
+        }
+        tmp=tmp->next;
+    }
+    if (hasKey==0){
+        Edge *key1Edge = newNode(key1);
+        key1Edge->next = graph->edge[key2];
+        graph->edge[key2] = key1Edge;
+    }
+}
 
-其他:
-    欧拉回路: 从图中一个节点出发，经图中所有节点一次且仅一次，最后回到出发的节点（欧拉证明:当且仅当图中所有节的度都是偶数）。
+void printGraph(Graph *graph){
+    int i;
+    printf("Graph:");
+    for (i=1;i<=graph->size;i++) {
+        printf("\n\tNode: %d : =>",i);
+        printNode(graph->edge[i]);
+    }
+}
+
+// 遍历
+
+//深度优先
+int visited[GRAPH_MAX_SIZE];
+void dfs(Graph *graph,int k){
+    visited[k]=1;
+    printf("\t%d",k);
+    Edge *tmp = graph->edge[k];
+    while (tmp){
+        if(visited[tmp->key]!=1) dfs(graph,tmp->key);
+        tmp = tmp->next;
+    }
+}
+//广度优先
+int visitedList[GRAPH_MAX_SIZE];
+int queue[GRAPH_MAX_SIZE];
+int front = 0;
+int rear = 0;
+void bfs(Graph *graph,int k){
+    if(visitedList[k]!=1)
+        printf("\t%d",k);
+    visitedList[k]=1;
+    Edge *tmp = graph->edge[k];
+    while (tmp){
+        if(visitedList[tmp->key]!=1) {
+            rear++;
+            queue[rear]=tmp->key;
+        }
+        tmp = tmp->next;
+    }
+    if(front<rear){
+        front++;
+        bfs(graph,queue[front]);
+    }
+}
+
+int main(){
+    Graph *graph = newGraph(5);
+    addEdge(graph,1,3);
+    addEdge(graph,3,2);
+    addEdge(graph,2,1);
+    addEdge(graph,2,5);
+    addEdge(graph,5,4);
+    printGraph(graph);
+    printf("\nDFS:");
+    dfs(graph,1);
+    printf("\nBFS:");
+    bfs(graph,1);
+}
