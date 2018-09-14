@@ -16,6 +16,7 @@ e.g: enum boolean { NO=0, YES=1 };
 
 */
 
-enum boolean { NO, YES };
+enum boolean { NO, YES } typedef boolean;
 enum escapes { BELL = '\a', BACKSPACE = '\b', TAB = '\t', NEWLINE = '\n', VTAB = '\v', RETURN = '\r' };
 enum months { JAN = 1, FEB, MAR, APR, MAY, JUN, JUL, AUG, SEP, OCT, NOV, DEC };
+boolean a = NO;
