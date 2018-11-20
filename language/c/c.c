@@ -27,6 +27,7 @@ info:
         宏定义(替换):
             #define 标识符(标识符表opt) 记号序列
                 宏定义(替换)，定义符号常量,宏,结尾无分号, e.g:
+                #define markName
                 #define markName replaceValue
                 #define  forever  for (;;)
                 #define  max(A, B)  ((A) > (B) ? (A) : (B))
@@ -188,7 +189,7 @@ const char *keyword[] = { // 标识符
         // 存储类别:
         "auto",     // 自动分配存储(运行堆)
         "register", // 寄存器变量(变量存于寄存器内，编辑器可能忽略)
-        "extern",   // 外部声明引用，使用外部 声明
+        "extern",   // 外部声明引用，使用外部(其他文件内的)成员（变量，函数）
         "static",   // 静态修饰，载入时分配空间(静态栈)，仅本文件内可访问
         // 数据类型
         "void","unsigned","signed","short","int","long","float","double","char", //
@@ -223,9 +224,10 @@ const char *operator[] = { // 运算符 &
         "&&","||",
         // 位
         "&",    // 取地址，按位与
-        "|","^","<<",">>",
+        "|","^",
         "~",    // 取反
         // 位移
+        "<<",">>",
         //
         "()","[]","->",".",
         //

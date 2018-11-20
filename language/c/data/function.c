@@ -25,7 +25,7 @@
 # ,... 变长参数列表，基于 <stdarg.h>中的宏定义，在第一版C中禁用(这些表示法起源于 C++)
 # C语言对非指针类型传参默认为传值(相对于传地址)
 e.g:
-    int *comp(void *, void *); // 声明函数comp,接受 通用类型指针，返回 int 指针
+    int *comp(void *, ,,,); // 声明函数comp,接受 通用类型指针，返回 int 指针
 参考:
     <stdarg.h>
     <setjmp.h>
