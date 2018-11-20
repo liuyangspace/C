@@ -1,0 +1,94 @@
+
+寻址方式
+    立即寻址:
+        指令操作数域直接给出参与运算的数值，
+        MOV A,#70H      // ，立即数70传至累加器A。
+    直接寻址:
+        指令操作数域给出参与运算的数的地址，只能用来表示 特殊功能寄存器、内部数据寄存器、位地址。e.g:
+        ANL 70H,#48H    // 地址为70单元内的数与48相与，结果存放在70单元内
+    简接寻址:
+        采用R0或R1前加"@"表示，R0或R1存放操作数的地址。e.g:
+        MOV A,@R1       // ，将地址为R1内值的单元内的数值传至累加器A。
+    寄存器寻址:
+        对选定的寄存器(工作寄存器R0-R7,累加器A,通用寄存器B,地址寄存器,进位C)中的数值进行操作。e,g:
+        INC R0          // R0内的值加一，结果保存至R0
+    相对寻址:
+        将程序计数器PC中的值(基地址)与指令第二字节给出的数相加，结果作为转移指令的转移地址。e.g:
+        JC 80H
+    变址寻址:
+        指令操作数指定一个存放变址基址的变址寄存器(程序计数器PC、地址寄存器DPTR)，偏移量与基址相加结果作为操作数的地址。e.g:
+        MOVEC A,@A+DPTR // 累加器A内的值与地址寄存器DPTR内的值相加，其结果值为地址单元内的值存入累加器A
+    位寻址:
+        对一些内部RAM及特殊寄存器按位操作。e.g:
+        MOV C,20H       //
+
+
+指令集
+    # "[]" 内为可选的 寻址方式 或 寄存器
+    数据传送:
+        MOV [A,direct,Rn,@Ri],[A,direct,Rn,@Ri,#data]       // 将第二操作数的值存入第一操作数内,
+        MOVC A,[@A+PC,@A+DPTR]                              // 变址移入累加器A
+        MOVX [A,@OC,@DPTR].[A,@OC,@DPTR]                    // 扩展RAM传值
+        PUSH direct                                         // 入栈
+        POP direct                                          // 出栈
+        XCH A,[direct,Rn,@Ri]                               // 将第二操作数的值与累加器A的数值 交换
+        XCHD A,@Ri                                          // 间接RAM低半字节 与累加器A的数值 交换
+    算术运算:
+        ADD A,[direct,Rn,@Ri,#data]                         // 将第二操作数的值 与累加器A的数值 相加
+        ADDC A,[direct,Rn,@Ri,#data]                        // 将第二操作数的值 与累加器A的数值 带进位相加
+        SUBB A,[direct,Rn,@Ri,#data]                        // 将第二操作数的值 与累加器A的数值 带进位相减
+        INC [A,direct,Rn,@Ri,DPTR]                          // 操作数的值自加一
+        DEC [A,direct,Rn,@Ri]                               // 操作数的值自减一
+        MUL AB                                              // A乘以B
+        DIV AB                                              // A除以B
+        DA A                                                // 累加器A十进制调整
+    逻辑运算:
+        ANL A,[direct,Rn,@Ri,#data] ; ANL direct,[A,#data]  // 将第二操作数的值 与第一操作数的数值 相"与"
+        ORL A,[direct,Rn,@Ri,#data] ; ORL direct,[A,#data]  // 将第二操作数的值 与第一操作数的数值 相"或"
+        XRL A,[direct,Rn,@Ri,#data] ; XRL direct,[A,#data]  // 将第二操作数的值 与第一操作数的数值 相"异或"
+        CLR A                                               // 累加器A 清零
+        CPR A                                               // 累加器A 求反
+        RL A                                                // 累加器A 循环左移
+        RR A                                                // 累加器A 循环右移
+        RLC A                                               // 累加器A 带进位循环左移
+        RRC A                                               // 累加器A 带进位循环右移
+        SWAP A                                              // 累加器A 半字节交换
+    转移控制:
+        ACALL addr11                                        // 绝对 短调用 子程序
+        LCALL addr16                                        //      长调用 子程序
+        RET                                                 // 子程序 返回
+        RETI                                                // 中断程序 返回
+        AJMP addr11                                         // 绝对 短转移
+        LJMP addr16                                         //      长转移
+        SJMP rel                                            //    相对转移
+        JMP @A+DPTR                                         //    相对DPTR间接转移
+        JZ rel                                              // 累加器为零转移
+        JNZ rel                                             // 累加器非零转移
+        JC rel                                              // 进位为1转移
+        JNC rel                                             // 进位为0转移
+        JB bit,rel                                          // 直接地址位为1转移
+        JNB bit,rel                                         // 直接地址位为0转移
+        JBC bit,rel                                         // 直接地址位为1转移,该位清零
+        CJNE A,direct,rel ; CJNE [A,Rn,@Ri],#data,rel       // 第一操作数的值 与 第二操作数的值 不相等转移
+        DJNZ [Rn,direct],rel                                // 第一操作数的值减一，非零转移
+        NOP                                                 // 空操作
+    布尔和位操作:
+        CLR [C,bit]                                         // 清0 进位/直接地址位
+        SETB [C,bit]                                        // 置1 进位/直接地址位
+        CPL [C,bit]                                         // 取反 进位/直接地址位
+
+操作码(部分)
+    CPL A                   //
+        1111 0100                                           // 一字节，一执行周期
+    ADD A,Rn
+        0010 1 r r r                                        // 一字节，一执行周期
+    ADD A,@Ri
+        0010 011 i                                          // 一字节，一执行周期
+    ADD A,#data
+        0010 0100 , (8位data值)                             // 二字节，一执行周期
+    ADD A,direct
+        0010 0101 , (8位direct地址)                         // 二字节，一执行周期
+    ACALL addrll            // 绝对 短调用
+        a10a9a8 1 0010 , a7a6a5a4 a3a2a1a0                  // 二字节，二执行周期
+    CJNE A,direct,rel
+        1011 0101 , (8位direct地址) , (8位rel地址)          // 三字节，二执行周期

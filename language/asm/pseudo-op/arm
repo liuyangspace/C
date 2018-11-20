@@ -1,0 +1,63 @@
+
+ARM/ADS 汇编伪操作列表:
+    # 下面给出较为完整的汇编伪操作列表。如需完整的列表，可查阅ads自带的“OnlineBooks”相关章节。
+    伪操作          语法格式                                    作用
+    #符号定义（Symbol Definition）伪操作：
+    GBLA            GBLA Variable                               声明一个全局的算术变量，并将其初始化成0
+    GBLL            GBLL Variable                               声明一个全局的逻辑变量，并将其初始化成{FALSE}
+    GBLS            GBLS Variable                               声明一个全局的字符串变量，并将其初始化成空串“”
+    LCLA            LCLA Variable                               声明一个局部的算术变量，并将其初始化成0
+    LCLL            LCLL Variable                               声明一个局部的逻辑变量，并将其初始化成{FALSE}
+    LCLS            LCLS Variable                               声明一个局部的串变量，并将其初始化成空串“”
+    SETA            Variable SETA expr                          给一个全局或局部算术变量赋值
+    SETL            Variable SETL expr                          给一个全局或局部逻辑变量赋值
+    SETS            Variable SETS expr                          给一个全局或局部字符串变量赋值
+    RLIST           name LIST (list of registers)               为一个通用寄存器列表定义名称
+    CN              name CN expr                                为一个协处理器的寄存器定义名称
+    CP              name CP expr                                为一个协处理器定义名称
+    DN/SN           name DN/SN expr                             DN/SN为一个双精度/单精度的VFP寄存器定义名称
+    FN              name FN expr                                为一个FPA浮点寄存器定义名称
+    #数据定义（Data Definition）伪操作：
+    LTORG           LTORG                                       声明一个数据缓冲池（也称为文字池）的开始
+    MAP             MAP expr {,base_register}                   定义一个结构化的内存表（Storage Map）的首地址
+    FIELD           {label} FIELD expr                          定义一个结构化内存表中的数据域
+    SPACE           {label} SPACE expr                          分配一块连续内存单元，并用0初始化
+    DCB             {label} DCB expr {, expr}                   分配一段字节内存单元，并用expr初始化
+    DCD/DCDU        {label} DCD {U} expr {, expr}...            分配一段字（对齐）的内存单元，DCD可能在分配的第1个内存单元前插入填补字节（padding），以保证分配的内存是字对齐的，DCDU不需要对齐
+    DCFD/DCFDU      {label} DCFD{U} fpliteral{,fpliteral}...    为双精度的浮点数分配字对齐的内存单元
+    DCFS/DCFSU      {label} DCFS{U} fpliteral{,fpliteral}...    为单精度的浮点数分配字对齐的内存单元
+    DCI             {label} DCI expr{,expr}...                  在ARM代码中分配一段字对齐的内存单元；在Thumb代码中，分配一段半字对齐的半字内存单元
+    DCQ/DCQU        {label} DCQ{U} {-}literal{,{-}literal}...   分配一段以双字（8个字节）为单位的内存
+    DCW/DCWU        {label} DCW expr{,expr}...                  DCW用于分配一段半字对齐的半字内存单元
+    #汇编控制（Assembly Control）伪操作：
+    IF/ELSE/ENDIF   IF logical expr                             能够根据条件把一段源代码包括在汇编语言程序内或者将其排除在程序之外
+                    ...  {ELSE
+                    ... }
+                    ENDIF
+    WHILE/WEND      WHILE logical expr                          能够根据条件重复汇编相同的一段源代码
+                    ...
+                    WEND
+    MACRO/MEND/MEXIT    MACRO {$label} macroname{$param {,$param}...} MACRO标识宏定义的开始，MEND标识宏定义的结束，MEXIT用于从宏中跳转出去，用MACRO和MEND定义的一段代码，称为宏定义体，通过宏名称来调用宏
+                        ...;宏代码
+                        MEND
+    #信息报告（Reporting）伪操作：
+    ASSERT          ASSERT logical expr                         对汇编程序的第二遍扫描中，如果其中ASSERT中条件不成立，ASSERT伪操作将报告该错误信息。
+    INFO            INFO numberic-expr, string-expr             对汇编程序的第一遍扫描或者第二遍扫描时INFO伪操作报告诊断信息
+    OPT             OPT n                                       通过OPT伪操作可以在源程序中设置列表选项
+    TTL             TTL title                                   在列表文件的每一页的开头插入一个标题
+    #其他（Miscellaneous）伪操作：
+    CODE16          CODE16                                      告诉汇编编译器后面的指令序列为16位的Thumb指令
+    CODE32          CODE32                                      告诉汇编编译器后面的指令序列为32位的ARM指令
+    EQU             name EQU expr{, type}                       为数字常量，基于寄存器的值和程序中的标号（基于PC的值）定义一个字符名称，类似于C语言中的#define宏定义
+    AREA            AREA sectionment {, attr}{, attr}...        定义一个代码段或者数据段
+    ENTRY           ENTRY                                       指定程序的入口点
+    END             END                                         告诉编译器已经到了源程序结尾
+    ALIGN           ALIGN {expr{, offset)}                      通过添加补丁字节使当前位置满足一定的对齐方式
+    EXPORT/GLOBAL   EXPORT symbol{[WEAK]}                       声明一个符号可以被其他文件引用
+    IMPORT/EXTERN   IMPORT Symbol{WEAK} / EXTERN symbol{(WEAK)} 告诉编译器当前的符号不是在本源文件中定义的，而是在其他源文件中定义的，在本源文件中可能引用该符号
+    GET/INCLUDE     GET filename                                将一个源文件包含到当前源文件中，并将被包含的文件在其当前位置进行汇编处理
+    INCBIN          INCBIN filename                             将一个文件包含到当前源文件中，被包含的文件不进行汇编处理
+    KEEP            KEEP{symbol}                                告诉编译器将局部符号包含在目标文件的符号表中
+    NOFP            NOFP                                        禁止源程序中包含浮点运算指令
+    REQUIRE         REQUIRE lable                               指定段之间的相互依赖关系
+    #参考:https://blog.csdn.net/zzsfqiuyigui/article/details/38392905?utm_source=copy
